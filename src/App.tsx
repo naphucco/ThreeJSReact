@@ -9,7 +9,7 @@ export default function App() {
       <div style={{
         width: '100vw',
         height: '100vh',
-        background: '#1a1a2e',
+        background: '#2e1a1aff',
         position: 'relative'
       }}>
         <Scene />
