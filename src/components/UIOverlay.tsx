@@ -57,7 +57,11 @@ function UIOverlay() {
             key={item.id}
             draggable
             onDragStart={(e) => {
-              e.dataTransfer.setData('itemId', item.id);
+              e.dataTransfer.setData('itemId', item.id); // handleDrop
+            }}
+            onDoubleClick={() => {
+              const event = new CustomEvent('spawnItem', { detail: { itemId: item.id } });
+              window.dispatchEvent(event);
             }}
             className={styles.itemCard}
           >
@@ -67,10 +71,7 @@ function UIOverlay() {
         ))}
       </div>
 
-      <div className={styles.summary}>
-        <p>🚀 Deployed models: {deployedItems.length}</p>
-      </div>
-
+      <p>🚀 Deployed models: {deployedItems.length}</p>
 
       {/* Hướng dẫn controls */}
       <div className={styles.controls}>

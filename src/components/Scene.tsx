@@ -23,27 +23,39 @@ export default function Scene() {
     if (!canvas) return
 
     const handleDragOver = (e: DragEvent) => e.preventDefault()
+
     const handleDrop = (e: DragEvent) => {
       e.preventDefault()
       const itemId = e.dataTransfer?.getData('itemId')
       if (itemId) {
-        dispatch(addDeployedItem({
-          id: crypto.randomUUID(),
-          type: itemId,
-          model: '/models/car.glb',
-          position: randomXZ(10),
-          scale: 0.005
-        }))
+        spawn(itemId);
       }
+    }
+
+    const handleSpawn = (e: any) => {
+      const { itemId } = e.detail;
+      spawn(itemId);
+    };
+
+    function spawn(itemId: string) {
+      dispatch(addDeployedItem({
+        id: crypto.randomUUID(),
+        type: itemId,
+        model: '/models/car.glb',
+        position: randomXZ(10),
+        scale: 0.005
+      }));
     }
 
     canvas.addEventListener('dragover', handleDragOver)
     canvas.addEventListener('drop', handleDrop)
+    window.addEventListener('spawnItem', handleSpawn);
 
     // cleanup để không gắn nhiều lần
     return () => {
       canvas.removeEventListener('dragover', handleDragOver)
       canvas.removeEventListener('drop', handleDrop)
+      window.removeEventListener('spawnItem', handleSpawn);
     }
   }, [dispatch])
 
