@@ -1,6 +1,6 @@
 .container {
   position: absolute;
-  top: 1rem;
+  bottom: 1rem;   /* 👈 thay vì top */
   left: 1rem;
   right: 1rem;
   color: white;
@@ -12,6 +12,18 @@
   backdrop-filter: blur(8px);
   max-width: clamp(240px, 90%, 320px);
 }
+
+@media (max-width: 600px) {
+  .container {
+    top: auto;        /* bỏ top */
+    bottom: 0;        /* dính dưới */
+    left: 0;
+    right: 0;
+    border-radius: 0; /* full width dưới cùng */
+    max-width: 100%;
+  }
+}
+
 
 .title {
   margin-bottom: 0.75rem;
