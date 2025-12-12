@@ -3,14 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 const sceneSlice = createSlice({
   name: 'scene',
   initialState: {
-    backgroundImage: 'image1'
+    textureImage: null
   },
   reducers: {
-    setBackgroundImage: (state, action) => {
-      state.backgroundImage = action.payload;
+    setTextureImage: (state, action) => {
+      state.textureImage = action.payload;
     }
   }
 });
 
-export const { setBackgroundImage } = sceneSlice.actions;
+export const { setTextureImage } = sceneSlice.actions;
 export default sceneSlice.reducer;

@@ -12,30 +12,39 @@ export default function CarModel({
 }) {
   const group = useRef<THREE.Group>(null);
 
-  const backgroundImage = useSelector((state: any) => state.scene.backgroundImage);
+  const textureImage = useSelector((state: any) => state.scene.textureImage);
 
   const { scene, animations } = useGLTF('/models/low-poly_truck_car_drifter.glb');
   const { actions, mixer } = useAnimations(animations, group);
 
   useEffect(() => {
-    if (!group.current) return;
+    if (!group.current || !textureImage) return;
 
-    let color: string | undefined;
-    if (backgroundImage === 'image1') color = '#3498db';
-    if (backgroundImage === 'image2') color = '#e74c3c';
-    if (backgroundImage === 'image3') color = '#f1c40f';
+    // Load texture từ đường dẫn
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load(textureImage);
 
-    group.current?.traverse((child) => {
+    group.current.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
+
         if (mesh.material) {
-          const material = mesh.material as THREE.MeshStandardMaterial;
-          material.color.set(color || '#3498db');
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((mat) => {
+              if ('map' in mat) {
+                (mat as THREE.MeshStandardMaterial).map = texture;
+                (mat as THREE.MeshStandardMaterial).needsUpdate = true;
+              }
+            });
+          } else {
+            const material = mesh.material as THREE.MeshStandardMaterial;
+            material.map = texture;
+            material.needsUpdate = true;
+          }
         }
       }
     });
-
-  }, [backgroundImage]);
+  }, [textureImage]);
 
   useEffect(() => {
     if (playAnimation && animations.length > 0) {
