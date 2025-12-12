@@ -32,10 +32,10 @@ export default function Scene() {
         </mesh>
         
         {/* Road lines (optional) */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.9, 0]}>
+        {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
           <planeGeometry args={[20, 2]} />
           <meshStandardMaterial color="#ffff00" emissive="#ffff00" emissiveIntensity={0.3} />
-        </mesh>
+        </mesh> */}
         
         {/* 3D Objects */}
         <SpinningCube />

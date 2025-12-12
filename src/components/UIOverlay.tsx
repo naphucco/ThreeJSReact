@@ -9,6 +9,16 @@ const textureOptions = [
   { id: '/textures/luxury.jpg', label: 'Luxury yellow' }
 ];
 
+const itemOptions = [
+  { id: 'car', label: 'Car', model: '/models/chair.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'table', label: 'Table', model: '/models/table.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' }
+];
+
 function UIOverlay() {
   const dispatch = useDispatch();
   const selectedTexture = useSelector((state: any) => state.scene.textureImage);
@@ -19,15 +29,7 @@ function UIOverlay() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>🚗 3D Car Showcase</h2>
-
-      {/* Thông tin model */}
-      <div className={styles.info}>
-        <p>
-          <strong>Model:</strong> Low-Poly Truck Car Drifter<br />
-          <strong>Artist:</strong> Ivan Norman
-        </p>
-      </div>
+      <h2 className={styles.title}>🚗 3D Garage Showcase</h2>
 
       {/* Vòng tròn chọn texture */}
       <div className={styles.textureSection}>
@@ -37,14 +39,31 @@ function UIOverlay() {
             <div
               key={option.id}
               onClick={() => handleClick(option.id)}
-              className={`${styles.textureCircle} ${
-                selectedTexture === option.id ? styles.textureCircleSelected : ''
-              }`}
+              className={`${styles.textureCircle} ${selectedTexture === option.id ? styles.textureCircleSelected : ''
+                }`}
               style={{ backgroundImage: `url(${option.id})` }}
               title={option.label}
             />
           ))}
         </div>
+      </div>
+
+      {/* Thư viện item */}
+      <h3 className={styles.subtitle}>Add Items</h3>
+      <div className={styles.itemList}>
+        {itemOptions.map((item) => (
+          <div
+            key={item.id}
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData('model', item.model);
+            }}
+            className={styles.itemCard}
+          >
+            <img src={item.thumbnail} alt={item.label} className={styles.itemImage} />
+            <p className={styles.itemLabel}>{item.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Hướng dẫn controls */}
