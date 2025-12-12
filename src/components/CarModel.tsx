@@ -1,8 +1,6 @@
-import * as THREE from 'three';
 import { useGLTF, useAnimations } from '@react-three/drei';
-import { useFrame, RootState as FiberRootState } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useRef, useMemo } from 'react';
+import * as THREE from 'three';
 
 export default function CarModel({
   position = [0, 0, 0],
@@ -11,40 +9,11 @@ export default function CarModel({
   playAnimation = true
 }) {
   const group = useRef<THREE.Group>(null);
+  const { scene, animations } = useGLTF('/models/car.glb');
 
-  const textureImage = useSelector((state: any) => state.scene.textureImage);
-
-  const { scene, animations } = useGLTF('/models/low-poly_truck_car_drifter.glb');
+  // Clone scene để mỗi instance độc lập
+  const clonedScene = useMemo(() => scene.clone(true), [scene]);
   const { actions, mixer } = useAnimations(animations, group);
-
-  useEffect(() => {
-    if (!group.current || !textureImage) return;
-
-    // Load texture từ đường dẫn
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load(textureImage);
-
-    group.current.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-
-        if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach((mat) => {
-              if ('map' in mat) {
-                (mat as THREE.MeshStandardMaterial).map = texture;
-                (mat as THREE.MeshStandardMaterial).needsUpdate = true;
-              }
-            });
-          } else {
-            const material = mesh.material as THREE.MeshStandardMaterial;
-            material.map = texture;
-            material.needsUpdate = true;
-          }
-        }
-      }
-    });
-  }, [textureImage]);
 
   useEffect(() => {
     if (playAnimation && animations.length > 0) {
@@ -59,14 +28,10 @@ export default function CarModel({
     };
   }, [actions, animations.length, playAnimation]);
 
-  useFrame((state: FiberRootState, delta: number) => {
-    if (mixer) mixer.update(delta);
-  });
-
   return (
     <primitive
       ref={group}
-      object={scene}
+      object={clonedScene}
       position={position}
       rotation={rotation}
       scale={scale}

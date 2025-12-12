@@ -12,16 +12,17 @@ const textureOptions = [
 const itemOptions = [
   { id: 'car', label: 'Car', model: '/models/chair.glb', thumbnail: '/thumbnails/car.png' },
   { id: 'table', label: 'Table', model: '/models/table.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'tree', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' }
+  { id: 'table1', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'table2', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'table3', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'table4', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
+  { id: 'table5', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' }
 ];
 
 function UIOverlay() {
   const dispatch = useDispatch();
   const selectedTexture = useSelector((state: any) => state.scene.textureImage);
+  const deployedItems = useSelector((state: any) => state.scene.deployedItems);
 
   const handleClick = (imageId: string) => {
     dispatch(setTextureImage(imageId));
@@ -56,7 +57,7 @@ function UIOverlay() {
             key={item.id}
             draggable
             onDragStart={(e) => {
-              e.dataTransfer.setData('model', item.model);
+              e.dataTransfer.setData('itemId', item.id);
             }}
             className={styles.itemCard}
           >
@@ -65,6 +66,11 @@ function UIOverlay() {
           </div>
         ))}
       </div>
+
+      <div className={styles.summary}>
+        <p>🚀 Deployed models: {deployedItems.length}</p>
+      </div>
+
 
       {/* Hướng dẫn controls */}
       <div className={styles.controls}>
