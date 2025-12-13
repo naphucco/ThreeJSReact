@@ -1,22 +1,28 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { OrbitControls, Environment } from '@react-three/drei'
 import SpinningCube from './SpinningCube'
 import CarModel from './CarModel'
 import { useDispatch, useSelector } from 'react-redux'
-import { addDeployedItem } from '../redux/sceneSlice';
+import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
 
 // https://sketchfab.com/3d-models/low-poly-truck-car-drifter-f3750246b6564607afbefc61cb1683b1" target
 export default function Scene() {
   const dispatch = useDispatch()
   const deployedItems = useSelector((state: any) => state.scene.deployedItems)
+  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId)
+  const orbitRef = useRef<any>(null)
 
   function randomXZ(range: number = 10): [number, number, number] {
     const x = (Math.random() - 0.5) * 2 * range; // từ -range đến +range
     const z = (Math.random() - 0.5) * 2 * range;
     return [x, 0, z];
   }
+
+  const handleUnselect = () => {
+    dispatch(setSelectedItem(null));
+  };
 
   useEffect(() => {
     const canvas = document.querySelector('canvas')
@@ -60,9 +66,15 @@ export default function Scene() {
     }
   }, [dispatch])
 
+  // Mỗi khi selectedItemId thay đổi thì bật/tắt OrbitControls
+  useEffect(() => {
+    if (orbitRef.current) {
+      orbitRef.current.enabled = selectedItemId === null
+    }
+  }, [selectedItemId])
 
   return (
-    <Canvas shadows camera={{ position: [8, 5, 8], fov: 50 }}>
+    <Canvas shadows camera={{ position: [8, 5, 8], fov: 50 }} onPointerMissed={handleUnselect}>
       <Suspense fallback={null}>
         {/* Lighting */}
         <ambientLight intensity={0.5} />
@@ -87,7 +99,7 @@ export default function Scene() {
         )}
 
         {/* Controls */}
-        <OrbitControls enablePan enableZoom enableRotate minDistance={5} maxDistance={20} />
+        <OrbitControls ref={orbitRef} enablePan enableZoom enableRotate minDistance={5} maxDistance={20} />
 
         {/* Environment */}
         <Environment preset="city" background={false} />
