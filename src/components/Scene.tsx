@@ -43,6 +43,7 @@ export default function Scene() {
         type: itemId,
         model: '/models/car.glb',
         position: randomXZ(10),
+        rotation: [0, 0, 0],   // radian
         scale: 0.005
       }));
     }

@@ -22,6 +22,7 @@ export default function CommonModel({
   const { scene } = useGLTF(modelPath)
   const dispatch = useDispatch();
   const selectedItemId = useSelector((state: any) => state.scene.selectedItemId)
+  const transformMode = useSelector((state:any) => state.scene.transformMode);
   const ref = useRef<THREE.Object3D | null>(null)
 
   // Clone để mỗi instance độc lập
@@ -57,7 +58,7 @@ export default function CommonModel({
       {selectedItemId === id && ref.current && (
         <TransformControls
           object={ref.current}
-          mode="translate"   // sau này có thể đổi thành 'rotate' hoặc 'scale'
+          mode={transformMode}   // 👈 dùng mode từ Redux
           onObjectChange={() => {
             const obj = ref.current!;
             dispatch(updateDeployedItem({

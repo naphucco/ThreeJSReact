@@ -13,12 +13,14 @@ interface SceneState {
   textureImage: string | null;
   deployedItems: DeployedItem[];
   selectedItemId: string | number | null;   // 👈 thêm field này
+  transformMode: 'translate' | 'rotate' | 'scale';
 }
 
 const initialState: SceneState = {
   textureImage: null,
   deployedItems: [],
-  selectedItemId: null
+  selectedItemId: null,
+  transformMode: 'translate'
 };
 
 const sceneSlice = createSlice({
@@ -34,6 +36,9 @@ const sceneSlice = createSlice({
     setSelectedItem: (state, action: PayloadAction<string | number | null>) => {
       state.selectedItemId = action.payload;
     },
+    setTransformMode: (state, action: PayloadAction<'translate' | 'rotate' | 'scale'>) => {
+      state.transformMode = action.payload;
+    },
     updateDeployedItem: (state, action) => {
       const { id, position, rotation, scale } = action.payload
       const item = state.deployedItems.find(i => i.id === id)
@@ -46,5 +51,12 @@ const sceneSlice = createSlice({
   }
 });
 
-export const { setTextureImage, addDeployedItem, setSelectedItem, updateDeployedItem } = sceneSlice.actions;
+export const { 
+  setTextureImage, 
+  addDeployedItem, 
+  setSelectedItem, 
+  updateDeployedItem, 
+  setTransformMode 
+} = sceneSlice.actions;
+
 export default sceneSlice.reducer;
