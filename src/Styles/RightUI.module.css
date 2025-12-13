@@ -91,3 +91,24 @@
   border-bottom: 2px solid #0078d7; /* gạch chân nhẹ */
 }
 
+.deleteButton {
+  background-color: #e74c3c;   /* đỏ tươi */
+  color: #fff;                 /* chữ trắng */
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.deleteButton:hover {
+  background-color: #c0392b;   /* đỏ đậm hơn khi hover */
+  transform: scale(1.05);      /* hơi phóng to */
+}
+
+.deleteButton:active {
+  background-color: #a93226;   /* đỏ tối khi click giữ */
+  transform: scale(0.95);      /* thu nhỏ nhẹ khi nhấn */
+}

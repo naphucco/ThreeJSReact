@@ -8,7 +8,6 @@ import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
 import { itemOptions } from './LeftUI'
 
-// https://sketchfab.com/3d-models/low-poly-truck-car-drifter-f3750246b6564607afbefc61cb1683b1" target
 export default function Scene() {
   const dispatch = useDispatch()
   const deployedItems = useSelector((state: any) => state.scene.deployedItems)

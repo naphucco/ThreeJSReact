@@ -44,12 +44,22 @@ const sceneSlice = createSlice({
         if (scale) item.scale = scale;
         if (textureImage) item.textureImage = textureImage; // 👈 thêm cập nhật texture
       }
+    },
+    removeDeployedItem: (state, action: PayloadAction<string>) => {
+      state.deployedItems = state.deployedItems.filter(
+        (item) => item.id !== action.payload
+      );
+      // nếu đang xóa item đang chọn thì clear luôn selectedItemId
+      if (state.selectedItemId === action.payload) {
+        state.selectedItemId = null;
+      }
     }
   }
 });
 
 export const {
   addDeployedItem,
+  removeDeployedItem,
   setSelectedItem,
   updateDeployedItem,
   setTransformMode

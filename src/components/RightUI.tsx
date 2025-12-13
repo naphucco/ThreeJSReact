@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setTransformMode, updateDeployedItem } from '../redux/sceneSlice';
+import { removeDeployedItem, setTransformMode, updateDeployedItem } from '../redux/sceneSlice';
 import styles from '../Styles/RightUI.module.css';
 
 const textureOptions = [
@@ -28,6 +28,11 @@ function RightUI() {
     }));
   };
 
+  const handleDelete = () => {
+    if (!selectedItemId) return;
+    dispatch(removeDeployedItem(selectedItemId));
+  };
+
   return (
     !selectedItemId ? null : (
       <div className={styles.containerRight}>
@@ -41,9 +46,8 @@ function RightUI() {
               <div
                 key={option.id}
                 onClick={() => handleChangeTexture(option.id)}
-                className={`${styles.textureCircle} ${
-                  selectedTexture === option.id ? styles.textureCircleSelected : ''
-                }`}
+                className={`${styles.textureCircle} ${selectedTexture === option.id ? styles.textureCircleSelected : ''
+                  }`}
                 style={{ backgroundImage: `url(${option.id})` }}
                 title={option.label}
               />
@@ -86,6 +90,13 @@ function RightUI() {
               <span>Scale</span>
             </label>
           </div>
+        </div>
+
+        {/* Nút Delete */}
+        <div className={styles.textureSection}>
+          <button onClick={handleDelete} className={styles.deleteButton}>
+            🗑 Delete Selected Item
+          </button>
         </div>
       </div>
     )

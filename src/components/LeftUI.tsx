@@ -4,7 +4,7 @@ import styles from '../Styles/LeftUI.module.css';
 
 export const itemOptions = [
   { id: 'car', label: 'Car', modelUrl: '/models/car.glb', scale: 0.005, thumbnail: '/thumbnails/car.png' },
-  { id: 'carport', label: 'Carport', modelUrl: '/models/carport1.glb', scale: 0.1, thumbnail: '/thumbnails/car.png' },
+  { id: 'carport', label: 'Carport', modelUrl: '/models/carport1.glb', scale: 0.1, thumbnail: '/thumbnails/carport1.png' },
 ];
 
 function LeftUI() {
