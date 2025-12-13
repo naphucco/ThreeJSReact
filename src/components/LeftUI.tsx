@@ -1,13 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../Styles/LeftUI.module.css';
-
-export const itemOptions = [
-  { id: 'car', label: 'Car', modelUrl: '/models/car.glb', scale: 0.005, thumbnail: '/thumbnails/car.png' },
-  { id: 'carport', label: 'Carport', modelUrl: '/models/carport1.glb', scale: 0.2, thumbnail: '/thumbnails/carport1.png' },
-  { id: 'double_canopy_carport', label: 'Canopy carport', modelUrl: '/models/double_canopy_carport.glb', scale: 0.3, thumbnail: '/thumbnails/double_canopy_carport.png' },
-
-];
+import { itemOptions } from '../configs/itemOptions';
 
 function LeftUI() {
   const dispatch = useDispatch();

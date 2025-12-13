@@ -6,8 +6,8 @@ import CarModel from './CarModel'
 import { useDispatch, useSelector } from 'react-redux'
 import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
-import { itemOptions } from './LeftUI'
 import Floor from './Floor'
+import { itemOptions } from '../configs/itemOptions'
 
 export default function Scene() {
   const dispatch = useDispatch()
@@ -91,14 +91,17 @@ export default function Scene() {
       <Suspense fallback={null}>
         {/* Lighting */}
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={15.5} castShadow />
+        <directionalLight
+          position={[10, 10, 5]}
+          intensity={5.5}
+          shadow-bias={-0.0005}   // fix shadow artifacts
+          shadow-normalBias={0.01}
+          castShadow
+        />
         <pointLight position={[-10, 10, -10]} intensity={0.5} color="#ff7b00" />
 
         {/* Floor */}
         <Floor />
-
-        {/* 3D Objects */}
-        <SpinningCube />
 
         {/* Render các deployedItems */}
         {deployedItems.map((item: any) =>
