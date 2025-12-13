@@ -90,12 +90,16 @@ export default function Scene() {
         {/* 3D Objects */}
         <SpinningCube />
 
-        {/* CarModel cố định */}
-        <CarModel position={[-4, 0, 0]} scale={0.005} playAnimation />
-
         {/* Render các deployedItems */}
         {deployedItems.map((item: any) =>
-          <CommonModel key={item.id} id={item.id} modelPath={item.model} position={item.position} scale={item.scale} />
+          <CommonModel
+            key={item.id}
+            id={item.id}
+            modelPath={item.model}
+            position={item.position}
+            scale={item.scale}
+            textureUrl={item.textureImage}
+          />
         )}
 
         {/* Controls */}

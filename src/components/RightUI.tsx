@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setTextureImage, setTransformMode } from '../redux/sceneSlice';
+import { setTransformMode, updateDeployedItem } from '../redux/sceneSlice';
 import styles from '../Styles/RightUI.module.css';
 
 const textureOptions = [
@@ -11,16 +11,25 @@ const textureOptions = [
 
 function RightUI() {
   const dispatch = useDispatch();
-  const selectedTexture = useSelector((state: any) => state.scene.textureImage);
-  const transformMode = useSelector((state: any) => state.scene.transformMode); // cho cách đang select (di chuyển/xoay/scale)
-  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId); // 👈 lấy id đang chọn
+  const transformMode = useSelector((state: any) => state.scene.transformMode);
+  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId);
 
-  const handleClick = (imageId: string) => {
-    dispatch(setTextureImage(imageId));
+  // 👇 lấy item đang được chọn
+  const selectedItem = useSelector((state: any) =>
+    state.scene.deployedItems.find((i: any) => i.id === selectedItemId)
+  );
+  const selectedTexture = selectedItem?.textureImage; // 👈 texture của item
+
+  const handleChangeTexture = (imageId: string) => {
+    if (!selectedItemId) return;
+    dispatch(updateDeployedItem({
+      id: selectedItemId,
+      textureImage: imageId
+    }));
   };
 
   return (
-    !selectedItemId ? <></> :
+    !selectedItemId ? null : (
       <div className={styles.containerRight}>
         <h2 className={styles.title}>🎨 Texture Options</h2>
 
@@ -31,9 +40,10 @@ function RightUI() {
             {textureOptions.map((option) => (
               <div
                 key={option.id}
-                onClick={() => handleClick(option.id)}
-                className={`${styles.textureCircle} ${selectedTexture === option.id ? styles.textureCircleSelected : ''
-                  }`}
+                onClick={() => handleChangeTexture(option.id)}
+                className={`${styles.textureCircle} ${
+                  selectedTexture === option.id ? styles.textureCircleSelected : ''
+                }`}
                 style={{ backgroundImage: `url(${option.id})` }}
                 title={option.label}
               />
@@ -78,6 +88,7 @@ function RightUI() {
           </div>
         </div>
       </div>
+    )
   );
 }
 

@@ -10,6 +10,7 @@ interface CommonModelProps {
   position?: [number, number, number]
   rotation?: [number, number, number]
   scale?: number
+  textureUrl?: string | null   // 👈 thêm
 }
 
 export default function CommonModel({
@@ -17,31 +18,50 @@ export default function CommonModel({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 1,
-  id
+  id,
+  textureUrl = null
 }: CommonModelProps) {
   const { scene } = useGLTF(modelPath)
   const dispatch = useDispatch();
   const selectedItemId = useSelector((state: any) => state.scene.selectedItemId)
-  const transformMode = useSelector((state:any) => state.scene.transformMode);
+  const transformMode = useSelector((state: any) => state.scene.transformMode);
   const ref = useRef<THREE.Object3D | null>(null)
 
   // Clone để mỗi instance độc lập
   const clonedScene = useMemo(() => scene.clone(true), [scene])
 
-  // Bật shadow cho tất cả mesh
+  // Bật shadow + gán texture nếu có
   useMemo(() => {
+    if (!textureUrl) return;
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(textureUrl);
+
     clonedScene.traverse((child: any) => {
       if (child.isMesh) {
-        child.castShadow = true
-        child.receiveShadow = true
-        child.material.side = THREE.DoubleSide
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.material.side = THREE.DoubleSide;
+
+        // clone material để không share giữa các instance
+        child.material = child.material.clone();
+
+        if (Array.isArray(child.material)) {
+          child.material.forEach((mat: any) => {
+            if ('map' in mat) {
+              mat.map = texture;
+              mat.needsUpdate = true;
+            }
+          });
+        } else {
+          child.material.map = texture;
+          child.material.needsUpdate = true;
+        }
       }
-    })
-  }, [clonedScene])
+    });
+  }, [clonedScene, textureUrl]);
 
   return (
     <>
-      {/* Luôn render primitive với onClick */}
       <primitive
         ref={ref}
         object={clonedScene}
@@ -54,18 +74,18 @@ export default function CommonModel({
         }}
       />
 
-      {/* Nếu đang được chọn thì render TransformControls song song */}
       {selectedItemId === id && ref.current && (
         <TransformControls
           object={ref.current}
-          mode={transformMode}   // 👈 dùng mode từ Redux
+          mode={transformMode}
           onObjectChange={() => {
             const obj = ref.current!;
             dispatch(updateDeployedItem({
               id,
               position: [obj.position.x, obj.position.y, obj.position.z],
               rotation: [obj.rotation.x, obj.rotation.y, obj.rotation.z],
-              scale
+              scale,
+              textureImage: textureUrl // 👈 lưu texture vào redux nếu cần
             }))
           }}
         />
