@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeDeployedItem, setTransformMode, updateDeployedItem } from '../redux/sceneSlice';
 import styles from '../Styles/RightUI.module.css';
@@ -13,6 +13,7 @@ function RightUI() {
   const dispatch = useDispatch();
   const transformMode = useSelector((state: any) => state.scene.transformMode);
   const selectedItemId = useSelector((state: any) => state.scene.selectedItemId);
+  const [patternSize, setPatternSize] = useState<number>(1.0);
 
   // 👇 lấy item đang được chọn
   const selectedItem = useSelector((state: any) =>
@@ -31,6 +32,29 @@ function RightUI() {
   const handleDelete = () => {
     if (!selectedItemId) return;
     dispatch(removeDeployedItem(selectedItemId));
+  };
+
+  useEffect(() => {
+    if (selectedItem) {
+      // Nếu item có texturePatternSize thì dùng, không thì mặc định 1.0
+      setPatternSize(selectedItem.texturePatternSize || 1.0);
+    }
+  }, [selectedItem]);
+
+  const sliderPercent = ((patternSize - 0.1) / (10 - 0.1)) * 100;
+
+  // Xử lý khi kéo slider
+  const handlePatternSizeChange = (value: number) => {
+    // Cập nhật state local ngay lập tức để slider mượt
+    setPatternSize(value);
+
+    // Dispatch lên Redux (có thể debounce nếu cần)
+    if (selectedItemId) {
+      dispatch(updateDeployedItem({
+        id: selectedItemId,
+        texturePatternSize: value
+      }));
+    }
   };
 
   return (
@@ -89,6 +113,30 @@ function RightUI() {
               />
               <span>Scale</span>
             </label>
+          </div>
+        </div>
+
+        {/* Pattern Size Slider */}
+        <div className={styles.textureSection}>
+          <h3 className={styles.subtitle}>
+            Pattern Size: <span className={styles.patternSizeValue}>{patternSize.toFixed(2)}</span>
+          </h3>
+
+          {/* Slider kéo */}
+          <div className={styles.sliderContainer}>
+            <input
+              type="range"
+              min="0.1"
+              max="10"
+              step="0.1"
+              value={patternSize}
+              onChange={(e) => handlePatternSizeChange(parseFloat(e.target.value))}
+              className={styles.slider}
+            />
+            <div className={styles.sliderLabels}>
+              <span>Small</span>
+              <span>Large</span>
+            </div>
           </div>
         </div>
 

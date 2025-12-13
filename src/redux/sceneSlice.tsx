@@ -8,6 +8,7 @@ interface DeployedItem {
   scale?: number;
   model?: string;
   textureImage?: string; // url to model
+  texturePatternSize?: number
 }
 
 interface SceneState {
@@ -36,13 +37,14 @@ const sceneSlice = createSlice({
       state.transformMode = action.payload;
     },
     updateDeployedItem: (state, action) => {
-      const { id, position, rotation, scale, textureImage } = action.payload;
+      const { id, position, rotation, scale, textureImage, texturePatternSize } = action.payload;
       const item = state.deployedItems.find(i => i.id === id);
       if (item) {
         if (position) item.position = position;
         if (rotation) item.rotation = rotation;
         if (scale) item.scale = scale;
-        if (textureImage) item.textureImage = textureImage; // 👈 thêm cập nhật texture
+        if (textureImage) item.textureImage = textureImage;
+        if (texturePatternSize) item.texturePatternSize = texturePatternSize;
       }
     },
     removeDeployedItem: (state, action: PayloadAction<string>) => {

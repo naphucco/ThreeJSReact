@@ -112,6 +112,7 @@ export default function Scene() {
             position={item.position}
             scale={item.scale}
             textureUrl={item.textureImage}
+            texturePatternSize={item.texturePatternSize}
           />
         )}
 

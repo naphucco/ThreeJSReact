@@ -10,7 +10,8 @@ interface CommonModelProps {
   position?: [number, number, number]
   rotation?: [number, number, number]
   scale?: number
-  textureUrl?: string | null   // 👈 thêm
+  textureUrl?: string | null
+  texturePatternSize?: number
 }
 
 export default function CommonModel({
@@ -19,7 +20,8 @@ export default function CommonModel({
   rotation = [0, 0, 0],
   scale = 1,
   id,
-  textureUrl = null
+  textureUrl = null,
+  texturePatternSize = 1.0
 }: CommonModelProps) {
   const { scene } = useGLTF(modelPath)
   const dispatch = useDispatch();
@@ -43,9 +45,8 @@ export default function CommonModel({
     bbox.getSize(size);
     // Tính repeat DỰA TRÊN KÍCH THƯỚC
     // Giả sử mỗi ô texture nên có kích thước ~1 đơn vị thế giới
-    const targetPatternSize = 1.0; // Pattern 1x1 unit
-    const repeatX = Math.max(1, Math.ceil(size.x / targetPatternSize));
-    const repeatY = Math.max(1, Math.ceil(size.y / targetPatternSize));
+    const repeatX = Math.max(1, Math.ceil(size.x / texturePatternSize));
+    const repeatY = Math.max(1, Math.ceil(size.y / texturePatternSize));
     texture.repeat.set(repeatX, repeatY);
 
     clonedScene.traverse((child: any) => {
@@ -70,7 +71,7 @@ export default function CommonModel({
         }
       }
     });
-  }, [clonedScene, textureUrl]);
+  }, [clonedScene, textureUrl, texturePatternSize]);
 
   return (
     <>
