@@ -4,6 +4,7 @@ interface DeployedItem {
   id: number | string;
   type: string;
   position: [number, number, number];
+  rotation: [number, number, number];  
   scale?: number;
   model?: string;
 }
@@ -11,11 +12,13 @@ interface DeployedItem {
 interface SceneState {
   textureImage: string | null;
   deployedItems: DeployedItem[];
+  selectedItemId: string | number | null;   // 👈 thêm field này
 }
 
 const initialState: SceneState = {
   textureImage: null,
-  deployedItems: []
+  deployedItems: [],
+  selectedItemId: null
 };
 
 const sceneSlice = createSlice({
@@ -27,9 +30,21 @@ const sceneSlice = createSlice({
     },
     addDeployedItem: (state, action: PayloadAction<DeployedItem>) => {
       state.deployedItems.push(action.payload);
+    },
+    setSelectedItem: (state, action: PayloadAction<string | number | null>) => {
+      state.selectedItemId = action.payload;
+    },
+    updateDeployedItem: (state, action) => {
+      const { id, position, rotation, scale } = action.payload
+      const item = state.deployedItems.find(i => i.id === id)
+      if (item) {
+        item.position = position
+        item.rotation = rotation
+        item.scale = scale
+      }
     }
   }
 });
 
-export const { setTextureImage, addDeployedItem } = sceneSlice.actions;
+export const { setTextureImage, addDeployedItem, setSelectedItem, updateDeployedItem } = sceneSlice.actions;
 export default sceneSlice.reducer;

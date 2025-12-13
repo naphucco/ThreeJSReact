@@ -82,7 +82,7 @@ export default function Scene() {
 
         {/* Render các deployedItems */}
         {deployedItems.map((item: any) =>
-          <CommonModel key={item.id} modelPath={item.model} position={item.position} scale={item.scale} />
+          <CommonModel key={item.id} id={item.id} modelPath={item.model} position={item.position} scale={item.scale} />
         )}
 
         {/* Controls */}

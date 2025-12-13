@@ -1,8 +1,11 @@
-import { useGLTF } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useGLTF, TransformControls } from '@react-three/drei'
+import { useMemo, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedItem, updateDeployedItem } from '../redux/sceneSlice';
 import * as THREE from 'three'
 
 interface CommonModelProps {
+  id: string
   modelPath: string
   position?: [number, number, number]
   rotation?: [number, number, number]
@@ -11,11 +14,15 @@ interface CommonModelProps {
 
 export default function CommonModel({
   modelPath,
-  position = [0,0,0],
-  rotation = [0,0,0],
-  scale = 1
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  scale = 1,
+  id
 }: CommonModelProps) {
   const { scene } = useGLTF(modelPath)
+  const dispatch = useDispatch();
+  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId)
+  const ref = useRef<THREE.Object3D | null>(null)
 
   // Clone để mỗi instance độc lập
   const clonedScene = useMemo(() => scene.clone(true), [scene])
@@ -32,11 +39,36 @@ export default function CommonModel({
   }, [clonedScene])
 
   return (
-    <primitive
-      object={clonedScene}
-      position={position}
-      rotation={rotation}
-      scale={scale}
-    />
+    <>
+      {/* Luôn render primitive với onClick */}
+      <primitive
+        ref={ref}
+        object={clonedScene}
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        onClick={(e: any) => {
+          e.stopPropagation();
+          dispatch(setSelectedItem(id));
+        }}
+      />
+
+      {/* Nếu đang được chọn thì render TransformControls song song */}
+      {selectedItemId === id && ref.current && (
+        <TransformControls
+          object={ref.current}
+          mode="translate"   // sau này có thể đổi thành 'rotate' hoặc 'scale'
+          onObjectChange={() => {
+            const obj = ref.current!;
+            dispatch(updateDeployedItem({
+              id,
+              position: [obj.position.x, obj.position.y, obj.position.z],
+              rotation: [obj.rotation.x, obj.rotation.y, obj.rotation.z],
+              scale
+            }))
+          }}
+        />
+      )}
+    </>
   )
 }

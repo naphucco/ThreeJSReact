@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setTextureImage } from '../redux/sceneSlice';
 import styles from '../Styles/LeftUI.module.css';
 
 const itemOptions = [
@@ -17,6 +16,9 @@ function LeftUI() {
   const dispatch = useDispatch();
   const selectedTexture = useSelector((state: any) => state.scene.textureImage);
   const deployedItems = useSelector((state: any) => state.scene.deployedItems);
+  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId);
+
+  const selectedItem = deployedItems.find((item: any) => item.id === selectedItemId);
 
   return (
     <div className={styles.container}>
@@ -45,6 +47,7 @@ function LeftUI() {
       </div>
 
       <p>🚀 Deployed models: {deployedItems.length}</p>
+      {selectedItem && <p>✅ Selected: {selectedItem.type} : {selectedItem.id}</p>}
 
       {/* Hướng dẫn controls */}
       <div className={styles.controls}>
