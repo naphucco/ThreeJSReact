@@ -1,12 +1,13 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useEffect, useRef } from 'react'
-import { OrbitControls, Environment } from '@react-three/drei'
+import { OrbitControls, Environment, Sky } from '@react-three/drei'
 import SpinningCube from './SpinningCube'
 import CarModel from './CarModel'
 import { useDispatch, useSelector } from 'react-redux'
 import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
 import { itemOptions } from './LeftUI'
+import Floor from './Floor'
 
 export default function Scene() {
   const dispatch = useDispatch()
@@ -80,17 +81,21 @@ export default function Scene() {
 
   return (
     <Canvas shadows camera={{ position: [8, 5, 8], fov: 50 }} onPointerMissed={handleUnselect}>
+      {/* Skybox */}
+      <Sky
+        distance={450000}
+        sunPosition={[5, 1, 8]}
+        inclination={0}
+        azimuth={0.25}
+      />
       <Suspense fallback={null}>
         {/* Lighting */}
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
+        <directionalLight position={[10, 10, 5]} intensity={15.5} castShadow />
         <pointLight position={[-10, 10, -10]} intensity={0.5} color="#ff7b00" />
 
         {/* Floor */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]} receiveShadow>
-          <planeGeometry args={[30, 30]} />
-          <meshStandardMaterial color="#444" roughness={0.8} metalness={0.2} />
-        </mesh>
+        <Floor />
 
         {/* 3D Objects */}
         <SpinningCube />

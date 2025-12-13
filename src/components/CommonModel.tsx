@@ -32,10 +32,6 @@ export default function CommonModel({
 
   // Bật shadow + gán texture nếu có
   useMemo(() => {
-    if (!textureUrl) return;
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(textureUrl);
-
     clonedScene.traverse((child: any) => {
       if (child.isMesh) {
         child.castShadow = true;
@@ -45,20 +41,25 @@ export default function CommonModel({
         // clone material để không share giữa các instance
         child.material = child.material.clone();
 
-        if (Array.isArray(child.material)) {
-          child.material.forEach((mat: any) => {
-            if ('map' in mat) {
-              mat.map = texture;
-              mat.needsUpdate = true;
-            }
-          });
-        } else {
-          child.material.map = texture;
-          child.material.needsUpdate = true;
+        if (textureUrl) {
+          const textureLoader = new THREE.TextureLoader();
+          const texture = textureLoader.load(textureUrl);
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat: any) => {
+              if ('map' in mat) {
+                mat.map = texture;
+                mat.needsUpdate = true;
+              }
+            });
+          } else {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
         }
       }
     });
   }, [clonedScene, textureUrl]);
+
 
   return (
     <>
