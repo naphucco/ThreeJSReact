@@ -1,0 +1,68 @@
+.containerRight {
+  position: absolute;
+  top: 1rem;       /* 👈 panel bên phải thường để trên */
+  right: 1rem;     /* 👈 dính bên phải */
+  color: white;
+  font-family: Arial, sans-serif;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  max-width: clamp(240px, 90%, 320px);
+}
+
+/* Responsive: khi màn hình nhỏ thì panel dính dưới cùng */
+@media (max-width: 600px) {
+  .containerRight {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    max-width: 100%;
+  }
+}
+
+.title {
+  margin-bottom: 0.75rem;
+  font-size: clamp(18px, 4vw, 24px);
+  color: #00b4db;
+  font-weight: bold;
+}
+
+.textureSection {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.subtitle {
+  color: white;
+  margin-bottom: 0.75rem;
+  font-size: clamp(14px, 3vw, 16px);
+}
+
+.textureList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.textureCircle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: all 0.2s ease;
+}
+
+.textureCircleSelected {
+  border: 3px solid #00b4db;
+  box-shadow: 0 0 10px #00b4db;
+}

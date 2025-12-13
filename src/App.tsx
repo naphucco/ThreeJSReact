@@ -1,7 +1,8 @@
 import { Provider } from 'react-redux';
 import Scene from './components/Scene';
-import UIOverlay from './components/UIOverlay';
+import LeftUI from './components/LeftUI';
 import { store } from './redux/store';
+import RightUI from './components/RightUI';
 
 export default function App() {
   return (
@@ -13,7 +14,8 @@ export default function App() {
         position: 'relative'
       }}>
         <Scene />
-        <UIOverlay />
+        <LeftUI />
+        <RightUI />
       </div>
     </Provider>
   );
