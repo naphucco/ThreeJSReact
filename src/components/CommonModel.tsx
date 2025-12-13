@@ -36,6 +36,18 @@ export default function CommonModel({
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load(textureUrl);
 
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    const bbox = new THREE.Box3().setFromObject(clonedScene);
+    const size = new THREE.Vector3();
+    bbox.getSize(size);
+    // Tính repeat DỰA TRÊN KÍCH THƯỚC
+    // Giả sử mỗi ô texture nên có kích thước ~1 đơn vị thế giới
+    const targetPatternSize = 1.0; // Pattern 1x1 unit
+    const repeatX = Math.max(1, Math.ceil(size.x / targetPatternSize));
+    const repeatY = Math.max(1, Math.ceil(size.y / targetPatternSize));
+    texture.repeat.set(repeatX, repeatY);
+
     clonedScene.traverse((child: any) => {
       if (child.isMesh) {
         child.castShadow = true;
