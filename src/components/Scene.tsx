@@ -6,6 +6,7 @@ import CarModel from './CarModel'
 import { useDispatch, useSelector } from 'react-redux'
 import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
+import { itemOptions } from './LeftUI'
 
 // https://sketchfab.com/3d-models/low-poly-truck-car-drifter-f3750246b6564607afbefc61cb1683b1" target
 export default function Scene() {
@@ -38,31 +39,36 @@ export default function Scene() {
       }
     }
 
-    const handleSpawn = (e: any) => {
+    const handleEnterSpawn = (e: any) => {
       const { itemId } = e.detail;
       spawn(itemId);
     };
 
     function spawn(itemId: string) {
+      // tìm option theo id
+      const option = itemOptions.find(opt => opt.id === itemId);
+      if (!option) return; // nếu không tìm thấy thì bỏ qua
+
       dispatch(addDeployedItem({
         id: crypto.randomUUID(),
         type: itemId,
-        model: '/models/car.glb',
-        position: randomXZ(10),
-        rotation: [0, 0, 0],   // radian
-        scale: 0.005
+        model: option.modelUrl,   // 👈 lấy model từ itemOptions
+        // position: randomXZ(10),
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
+        scale: option.scale
       }));
     }
 
     canvas.addEventListener('dragover', handleDragOver)
     canvas.addEventListener('drop', handleDrop)
-    window.addEventListener('spawnItem', handleSpawn);
+    window.addEventListener('spawnItem', handleEnterSpawn);
 
     // cleanup để không gắn nhiều lần
     return () => {
       canvas.removeEventListener('dragover', handleDragOver)
       canvas.removeEventListener('drop', handleDrop)
-      window.removeEventListener('spawnItem', handleSpawn);
+      window.removeEventListener('spawnItem', handleEnterSpawn);
     }
   }, [dispatch])
 

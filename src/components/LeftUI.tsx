@@ -2,14 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from '../Styles/LeftUI.module.css';
 
-const itemOptions = [
-  { id: 'car', label: 'Car', model: '/models/chair.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table', label: 'Table', model: '/models/table.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table1', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table2', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table3', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table4', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' },
-  { id: 'table5', label: 'Tree', model: '/models/tree.glb', thumbnail: '/thumbnails/car.png' }
+export const itemOptions = [
+  { id: 'car', label: 'Car', modelUrl: '/models/car.glb', scale: 0.005, thumbnail: '/thumbnails/car.png' },
+  { id: 'carport', label: 'Carport', modelUrl: '/models/carport1.glb', scale: 0.1, thumbnail: '/thumbnails/car.png' },
 ];
 
 function LeftUI() {
