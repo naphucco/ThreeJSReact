@@ -14,6 +14,8 @@ function RightUI() {
   const transformMode = useSelector((state: any) => state.scene.transformMode);
   const selectedItemId = useSelector((state: any) => state.scene.selectedItemId);
   const [patternSize, setPatternSize] = useState<number>(1.0);
+  const sliderMin = 0.1;
+  const sliderMax = 20;
 
   // 👇 lấy item đang được chọn
   const selectedItem = useSelector((state: any) =>
@@ -41,7 +43,7 @@ function RightUI() {
     }
   }, [selectedItem]);
 
-  const sliderPercent = ((patternSize - 0.1) / (10 - 0.1)) * 100;
+  const sliderPercent = ((patternSize - sliderMin) / (sliderMax - sliderMin)) * 100;
 
   // Xử lý khi kéo slider
   const handlePatternSizeChange = (value: number) => {
@@ -126,8 +128,8 @@ function RightUI() {
           <div className={styles.sliderContainer}>
             <input
               type="range"
-              min="0.1"
-              max="10"
+              min={sliderMin}
+              max={sliderMax}
               step="0.1"
               value={patternSize}
               onChange={(e) => handlePatternSizeChange(parseFloat(e.target.value))}

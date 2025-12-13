@@ -1,5 +1,5 @@
 import { useGLTF, TransformControls } from '@react-three/drei'
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedItem, updateDeployedItem } from '../redux/sceneSlice';
 import * as THREE from 'three'
@@ -32,46 +32,58 @@ export default function CommonModel({
   // Clone để mỗi instance độc lập
   const clonedScene = useMemo(() => scene.clone(true), [scene])
 
-  // Bật shadow + gán texture nếu có
-  useMemo(() => {
-    if (!textureUrl) return;
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(textureUrl);
+  // State để lưu texture
+  const [texture, setTexture] = useState<THREE.Texture | null>(null)
 
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    const bbox = new THREE.Box3().setFromObject(clonedScene);
-    const size = new THREE.Vector3();
-    bbox.getSize(size);
-    // Tính repeat DỰA TRÊN KÍCH THƯỚC
-    // Giả sử mỗi ô texture nên có kích thước ~1 đơn vị thế giới
-    const repeatX = Math.max(1, Math.ceil(size.x / texturePatternSize));
-    const repeatY = Math.max(1, Math.ceil(size.y / texturePatternSize));
-    texture.repeat.set(repeatX, repeatY);
+  // Load texture khi textureUrl thay đổi
+  useEffect(() => {
+    if (!textureUrl) {
+      setTexture(null)
+      return
+    }
+    const loader = new THREE.TextureLoader()
+    const tex = loader.load(textureUrl)
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+    setTexture(tex)
+  }, [textureUrl])
 
+  // Apply texture vào materials
+  useEffect(() => {
+    if (!texture) return
     clonedScene.traverse((child: any) => {
       if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-        // child.material.side = THREE.DoubleSide;
-
-        // clone material để không share giữa các instance
-        child.material = child.material.clone();
-
+        child.castShadow = true
+        child.receiveShadow = true
+        child.material = child.material.clone()
         if (Array.isArray(child.material)) {
           child.material.forEach((mat: any) => {
             if ('map' in mat) {
-              mat.map = texture;
-              mat.needsUpdate = true;
+              mat.map = texture
+              mat.needsUpdate = true
             }
-          });
+          })
         } else {
-          child.material.map = texture;
-          child.material.needsUpdate = true;
+          child.material.map = texture
+          child.material.needsUpdate = true
         }
       }
-    });
-  }, [clonedScene, textureUrl, texturePatternSize]);
+    })
+  }, [clonedScene, texture])
+
+  // Update repeat khi pattern size thay đổi
+  useEffect(() => {
+    if (!texture) return
+    const bbox = new THREE.Box3().setFromObject(clonedScene)
+    const size = new THREE.Vector3()
+    bbox.getSize(size)
+
+    // Không giới hạn repeat, cứ tính theo patternSize
+    const repeatX = size.x / texturePatternSize
+    const repeatY = size.y / texturePatternSize
+
+    texture.repeat.set(repeatX, repeatY)
+    texture.needsUpdate = true
+  }, [clonedScene, texture, texturePatternSize])
 
   return (
     <>
