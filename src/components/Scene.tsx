@@ -8,13 +8,12 @@ import { addDeployedItem, setSelectedItem } from '../redux/sceneSlice';
 import CommonModel from './CommonModel'   // component load glb/gltf
 import Floor from './Floor'
 import { itemOptions } from '../configs/itemOptions'
+import CameraControls from './CameraControls'
 
 export default function Scene() {
   const dispatch = useDispatch()
   const deployedItems = useSelector((state: any) => state.scene.deployedItems)
-  const selectedItemId = useSelector((state: any) => state.scene.selectedItemId)
-  const orbitRef = useRef<any>(null)
-
+  
   function randomXZ(range: number = 10): [number, number, number] {
     const x = (Math.random() - 0.5) * 2 * range; // từ -range đến +range
     const z = (Math.random() - 0.5) * 2 * range;
@@ -72,12 +71,7 @@ export default function Scene() {
     }
   }, [dispatch])
 
-  // Mỗi khi selectedItemId thay đổi thì bật/tắt OrbitControls
-  useEffect(() => {
-    if (orbitRef.current) {
-      orbitRef.current.enabled = selectedItemId === null
-    }
-  }, [selectedItemId])
+  
 
   return (
     <Canvas shadows camera={{ position: [8, 5, 8], fov: 50 }} onPointerMissed={handleUnselect}>
@@ -117,7 +111,8 @@ export default function Scene() {
         )}
 
         {/* Controls */}
-        <OrbitControls ref={orbitRef} enablePan enableZoom enableRotate minDistance={5} maxDistance={20} />
+        <CameraControls />
+        {/* <OrbitControls ref={orbitRef} enablePan enableZoom enableRotate minDistance={5} maxDistance={20} /> */}
 
         {/* Environment */}
         <Environment preset="city" background={false} />

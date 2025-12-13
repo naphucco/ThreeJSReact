@@ -47,13 +47,21 @@ export default function CommonModel({
     setTexture(tex)
   }, [textureUrl])
 
+  // Luôn bật shadow cho mesh, kể cả khi chưa có texture
+  useEffect(() => {
+    clonedScene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+  }, [clonedScene])
+
   // Apply texture vào materials
   useEffect(() => {
     if (!texture) return
     clonedScene.traverse((child: any) => {
       if (child.isMesh) {
-        child.castShadow = true
-        child.receiveShadow = true
         child.material = child.material.clone()
         if (Array.isArray(child.material)) {
           child.material.forEach((mat: any) => {
