@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeDeployedItem, setTransformMode, updateDeployedItem } from '../redux/sceneSlice';
 import styles from '../Styles/RightUI.module.css';
 
+// Predefined texture options for the user to choose from
 const textureOptions = [
   { id: '/textures/multicam.jpg', label: 'Military multicam' },
   { id: '/textures/sports.jpg', label: 'Sport red' },
@@ -10,91 +11,118 @@ const textureOptions = [
 ];
 
 function RightUI() {
+  // Redux dispatch function to send actions
   const dispatch = useDispatch();
+  
+  // Get current transform mode from Redux store
   const transformMode = useSelector((state: any) => state.scene.transformMode);
+  
+  // Get ID of currently selected item
   const selectedItemId = useSelector((state: any) => state.scene.selectedItemId);
+  
+  // Local state for pattern size (texture tiling/repetition)
   const [patternSize, setPatternSize] = useState<number>(1.0);
-  const sliderMin = 0.1;
-  const sliderMax = 20;
+  
+  // Slider range configuration
+  const sliderMin = 0.1; // Minimum pattern size
+  const sliderMax = 20;  // Maximum pattern size
 
-  // 👇 lấy item đang được chọn
+  // Find the currently selected item from deployedItems array
   const selectedItem = useSelector((state: any) =>
     state.scene.deployedItems.find((i: any) => i.id === selectedItemId)
   );
-  const selectedTexture = selectedItem?.textureImage; // 👈 texture của item
+  
+  // Get current texture of selected item (if any)
+  const selectedTexture = selectedItem?.textureImage;
 
+  // Handler to change texture of selected item
   const handleChangeTexture = (imageId: string) => {
-    if (!selectedItemId) return;
+    if (!selectedItemId) return; // Exit if no item is selected
+    
+    // Dispatch action to update texture in Redux store
     dispatch(updateDeployedItem({
       id: selectedItemId,
-      textureImage: imageId
+      textureImage: imageId // Update texture URL
     }));
   };
 
+  // Handler to delete selected item
   const handleDelete = () => {
-    if (!selectedItemId) return;
+    if (!selectedItemId) return; // Exit if no item is selected
+    
+    // Dispatch action to remove item from scene
     dispatch(removeDeployedItem(selectedItemId));
   };
 
+  // Effect to sync local state with selected item's properties
   useEffect(() => {
     if (selectedItem) {
-      // Nếu item có texturePatternSize thì dùng, không thì mặc định 1.0
+      // If item has texturePatternSize, use it; otherwise use default 1.0
       setPatternSize(selectedItem.texturePatternSize || 1.0);
     }
-  }, [selectedItem]);
+  }, [selectedItem]); // Runs when selectedItem changes
 
+  // Calculate percentage for slider fill visualization (optional styling)
   const sliderPercent = ((patternSize - sliderMin) / (sliderMax - sliderMin)) * 100;
 
-  // Xử lý khi kéo slider
+  // Handler for pattern size slider changes
   const handlePatternSizeChange = (value: number) => {
-    // Cập nhật state local ngay lập tức để slider mượt
+    // Update local state immediately for responsive slider
     setPatternSize(value);
 
-    // Dispatch lên Redux (có thể debounce nếu cần)
+    // Dispatch update to Redux store
+    // Note: Could debounce this for performance if updates are too frequent
     if (selectedItemId) {
       dispatch(updateDeployedItem({
         id: selectedItemId,
-        texturePatternSize: value
+        texturePatternSize: value // Update texture tiling size
       }));
     }
   };
 
+  // Render nothing if no item is selected (conditional rendering)
   return (
     !selectedItemId ? null : (
       <div className={styles.containerRight}>
+        {/* Header */}
         <h2 className={styles.title}>🎨 Texture Options</h2>
 
-        {/* Vòng tròn chọn texture */}
+        {/* Texture Selection Section */}
         <div className={styles.textureSection}>
           <h3 className={styles.subtitle}>Select Texture</h3>
           <div className={styles.textureList}>
             {textureOptions.map((option) => (
               <div
-                key={option.id}
-                onClick={() => handleChangeTexture(option.id)}
+                key={option.id} // Unique key for React list rendering
+                onClick={() => handleChangeTexture(option.id)} // Click handler
+                // Apply selected styling if this texture is currently applied
                 className={`${styles.textureCircle} ${selectedTexture === option.id ? styles.textureCircleSelected : ''
                   }`}
+                // Set background image to show texture preview
                 style={{ backgroundImage: `url(${option.id})` }}
-                title={option.label}
+                title={option.label} // Tooltip on hover
               />
             ))}
           </div>
         </div>
 
-        {/* Chọn TransformControls mode */}
+        {/* Transform Mode Selection Section */}
         <div className={styles.textureSection}>
           <h3 className={styles.subtitle}>Transform Mode</h3>
           <div className={styles.transformModeGroup}>
+            {/* Translate (Move) Mode */}
             <label>
               <input
                 type="radio"
-                name="mode"
+                name="mode" // Radio group name
                 value="translate"
-                checked={transformMode === 'translate'}
-                onChange={() => dispatch(setTransformMode('translate'))}
+                checked={transformMode === 'translate'} // Bind to Redux state
+                onChange={() => dispatch(setTransformMode('translate'))} // Update Redux
               />
-              <span>Move</span>
+              <span>Move</span> {/* Display label */}
             </label>
+            
+            {/* Rotate Mode */}
             <label>
               <input
                 type="radio"
@@ -105,6 +133,8 @@ function RightUI() {
               />
               <span>Rotate</span>
             </label>
+            
+            {/* Scale Mode */}
             <label>
               <input
                 type="radio"
@@ -118,23 +148,25 @@ function RightUI() {
           </div>
         </div>
 
-        {/* Pattern Size Slider */}
+        {/* Pattern Size (Texture Tiling) Control Section */}
         <div className={styles.textureSection}>
           <h3 className={styles.subtitle}>
             Pattern Size: <span className={styles.patternSizeValue}>{patternSize.toFixed(2)}</span>
           </h3>
 
-          {/* Slider kéo */}
+          {/* Slider Container */}
           <div className={styles.sliderContainer}>
+            {/* Range Input Slider */}
             <input
               type="range"
               min={sliderMin}
               max={sliderMax}
-              step="0.1"
+              step="0.1" // Increment/decrement step
               value={patternSize}
               onChange={(e) => handlePatternSizeChange(parseFloat(e.target.value))}
               className={styles.slider}
             />
+            {/* Slider Labels */}
             <div className={styles.sliderLabels}>
               <span>Small</span>
               <span>Large</span>
@@ -142,7 +174,7 @@ function RightUI() {
           </div>
         </div>
 
-        {/* Nút Delete */}
+        {/* Delete Button Section */}
         <div className={styles.textureSection}>
           <button onClick={handleDelete} className={styles.deleteButton}>
             🗑 Delete Selected Item
